@@ -2,6 +2,7 @@
 #include "vector"
 #include <cmath>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -11,10 +12,12 @@ private:
   vector<double> crit_points;
   vector<double> singularities;
 
-  double start_point, end_point, delta;
+  double start_point, end_point,
+      delta; // Distance between 2 points must be more than 2
 
 private:
   void function_pushes(double numerator, double denominator, int x) {
+
     if (denominator == 0) {
       singularities.push_back(x);
       return;
@@ -28,15 +31,16 @@ private:
   }
 
   void vector_to_stream(vector<double> vec) {
+
     for (const auto &item : vec) {
-      cout << item << " ";
+      cout << item << "";
     }
-    cout << endl;
   }
 
   void vector_to_file(vector<double> vec, ofstream &file) {
+
     for (const auto &item : vec) {
-      file << item << " ";
+      file << item << "";
     }
     file.close();
   }
@@ -50,23 +54,20 @@ private:
   }
 
   bool num_roots_checker(double s_point, double delta) {
-    return fabs((s_point + delta) - round(s_point + delta)) < 1e-9;
+    return (int)(s_point + delta) == (s_point + delta);
   }
 
   double Init_Delta(double s_point, double e_point) {
     int N;
     double delta;
 
-    while (true) {
-      cout << "Please Enter number of roots" << endl;
-      cin >> N;
-      delta = delta_calc(s_point, e_point, N);
+    cout << "Please Enter number of roots" << endl;
+    cin >> N;
+    delta = delta_calc(s_point, e_point, N);
 
-      if (num_roots_checker(s_point, delta)) {
-        break;
-      }
-
-      cout << "Number of roots is incorrect" << endl;
+    if (!num_roots_checker(s_point, delta)) {
+      cout << "Number of roots is incorrect";
+      Init_Delta(s_point, e_point);
     }
 
     return delta;
@@ -86,6 +87,7 @@ private:
   }
 
   void Init(double s_point, double e_point, int N) {
+
     if (!dist_checker(s_point, e_point)) {
       cout << "Distance between two points must be more than 2";
       return;
@@ -94,7 +96,7 @@ private:
     double dlt = delta_calc(s_point, e_point, N);
 
     if (!num_roots_checker(s_point, N)) {
-      cout << "Number of roots is incorrect" << endl;
+      cout << "Number of roots in incorrect" << endl;
       return;
     }
 
