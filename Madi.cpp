@@ -9,11 +9,11 @@ using namespace std;
 class Madi {
 
 private:
-  vector<double> crit_points;
-  vector<double> singularities;
+  vector<double> function_values; // List of values of function
+  vector<double>
+      singularities; // List of X values for which function doesn't exist
 
-  double start_point, end_point,
-      delta; // Distance between 2 points must be more than 2
+  double start_point, end_point, delta;
 
 private:
   void function_pushes(double numerator, double denominator, int x) {
@@ -22,25 +22,27 @@ private:
       singularities.push_back(x);
       return;
     }
-    crit_points.push_back(numerator / denominator);
+    function_values.push_back(numerator / denominator);
   }
 
   void vector_clear() {
-    crit_points.clear();
+    function_values.clear();
     singularities.clear();
   }
 
-  void vector_to_stream(vector<double> vec) {
+  void vector_to_stream(const vector<double> &vec) {
 
     for (const auto &item : vec) {
-      cout << item << "";
+      cout << item << " ";
     }
+
+    cout << "\n" << endl;
   }
 
-  void vector_to_file(vector<double> vec, ofstream &file) {
+  void vector_to_file(const vector<double> &vec, ofstream &file) {
 
     for (const auto &item : vec) {
-      file << item << "";
+      file << item << " ";
     }
     file.close();
   }
@@ -59,14 +61,12 @@ private:
 
   double Init_Delta(double s_point, double e_point) {
     int N;
-    double delta;
-
     cout << "Please Enter number of roots" << endl;
     cin >> N;
     delta = delta_calc(s_point, e_point, N);
 
     if (!num_roots_checker(s_point, delta)) {
-      cout << "Number of roots is incorrect";
+      cout << "Number of roots is incorrect" << endl;
       Init_Delta(s_point, e_point);
     }
 
@@ -74,22 +74,22 @@ private:
   }
 
   void Init() {
-    double s_point, e_point;
 
     cout << "Please enter Start and End points" << endl;
-    cin >> s_point >> e_point;
+    cin >> start_point >> end_point;
 
-    if (!dist_checker(s_point, e_point)) {
-      cout << "Distance between two points must be more than 2";
+    if (!dist_checker(start_point, end_point)) {
+      cout << "Distance between two points must be more than 2" << endl;
       Init();
     }
-    delta = Init_Delta(s_point, e_point);
+
+    delta = Init_Delta(start_point, end_point);
   }
 
   void Init(double s_point, double e_point, int N) {
 
     if (!dist_checker(s_point, e_point)) {
-      cout << "Distance between two points must be more than 2";
+      cout << "Distance between two points must be more than 2" << endl;
       return;
     }
 
@@ -106,7 +106,6 @@ private:
   }
 
   void f_test(int x) {
-    vector_clear();
 
     double numerator = 25 * pow(x, 2);
     double denominator = x;
@@ -115,7 +114,6 @@ private:
   }
 
   void f(int x) {
-    vector_clear();
 
     double numerator = sin(pow(x / 2, 2)) + 23 * x;
     double denominator = cos(x / 2);
@@ -128,7 +126,9 @@ public:
   Madi(double s_point, double e_point, int N) { Init(s_point, e_point, N); }
 
   void f_range() {
-    for (auto i = start_point + delta; i < end_point; i += delta) {
+    vector_clear();
+
+    for (auto i = start_point; i <= end_point; i += delta) {
       f_test(i);
     }
   }
@@ -136,18 +136,18 @@ public:
   void print(bool console = true) {
     if (console) {
       cout << "Critical points:" << endl;
-      vector_to_stream(crit_points);
+      vector_to_stream(function_values);
 
-      cout << "Singularity points" << endl;
+      cout << "Singularity points:" << endl;
       vector_to_stream(singularities);
 
     } else {
+
       ofstream crit_output_file("./crit_points.txt");
       ofstream sing_output_file("./singularity.txt");
 
-      vector_to_file(crit_points, crit_output_file);
+      vector_to_file(function_values, crit_output_file);
       vector_to_file(singularities, sing_output_file);
     }
-    vector_clear();
   }
 };
