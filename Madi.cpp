@@ -26,7 +26,11 @@ private:
     }
   }
 
-  void function_pushes(double numerator, double denominator, int x) {
+  void
+  function_pushes(double numerator, double denominator,
+                  int x) { // Adds result of calculation to results collection,
+                           // if the function doesn't exist in this point it
+                           // adds this point to singularity collection
 
     if (denominator == 0) {
       singularities.push_back(x);
@@ -35,12 +39,14 @@ private:
     function_values.push_back(numerator / denominator);
   }
 
-  void vector_clear() {
+  void vector_clear() { // Clears vectors
     function_values.clear();
     singularities.clear();
   }
 
-  void vector_to_stream(const vector<double> &vec) {
+  void vector_to_stream(
+      const vector<double>
+          &vec) { // Writes all elements of vector to console out stream
 
     for (const auto &item : vec) {
       cout << item << " ";
@@ -49,7 +55,8 @@ private:
     cout << vector_Min_Max(vec) << endl;
   }
 
-  void vector_to_file(const vector<double> &vec, ofstream &file) {
+  void vector_to_file(const vector<double> &vec,
+                      ofstream &file) { // Writes all elements of vector to file
 
     for (const auto &item : vec) {
       file << item << " ";
