@@ -1,7 +1,7 @@
-#include "iostream"
-#include "vector"
+#include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <iostream>
 #include <vector>
 
 using namespace std;
@@ -12,10 +12,20 @@ private:
   vector<double> function_values; // List of values of function
   vector<double>
       singularities; // List of X values for which function doesn't exist
+  int start_point, end_point;
+  double delta;
 
-  double start_point, end_point, delta;
+  string vector_Min_Max(const vector<double> &vec) {
+    if (vec.size() > 1) {
+      return {"Max point= " +
+              to_string((double)*max_element(vec.begin(), vec.end())) + "\n" +
+              "Min point= " +
+              to_string((double)*min_element(vec.begin(), vec.end())) + "\n"};
+    } else {
+      return "";
+    }
+  }
 
-private:
   void function_pushes(double numerator, double denominator, int x) {
 
     if (denominator == 0) {
@@ -35,8 +45,8 @@ private:
     for (const auto &item : vec) {
       cout << item << " ";
     }
-
-    cout << "\n" << endl;
+    cout << endl;
+    cout << vector_Min_Max(vec) << endl;
   }
 
   void vector_to_file(const vector<double> &vec, ofstream &file) {
@@ -44,18 +54,17 @@ private:
     for (const auto &item : vec) {
       file << item << " ";
     }
+    file << endl << vector_Min_Max(vec);
     file.close();
   }
 
-  double delta_calc(double s_point, double e_point, int N) {
-    return (e_point - s_point) / (N - 1);
+  double delta_calc(int s_point, int e_point, int N) {
+    return (double)(e_point - s_point) / (N - 1);
   }
 
-  bool dist_checker(double s_point, double e_point) {
-    return e_point - s_point > 3;
-  }
+  bool dist_checker(int s_point, int e_point) { return e_point - s_point > 3; }
 
-  bool num_roots_checker(double s_point, double delta) {
+  bool num_roots_checker(int s_point, double delta) {
     return (int)(s_point + delta) == (s_point + delta);
   }
 
@@ -86,7 +95,7 @@ private:
     delta = Init_Delta(start_point, end_point);
   }
 
-  void Init(double s_point, double e_point, int N) {
+  void Init(int s_point, int e_point, int N) {
 
     if (!dist_checker(s_point, e_point)) {
       cout << "Distance between two points must be more than 2" << endl;
@@ -123,7 +132,7 @@ private:
 
 public:
   Madi() { Init(); }
-  Madi(double s_point, double e_point, int N) { Init(s_point, e_point, N); }
+  Madi(int s_point, int e_point, int N) { Init(s_point, e_point, N); }
 
   void f_range() {
     vector_clear();
@@ -135,7 +144,7 @@ public:
 
   void print(bool console = true) {
     if (console) {
-      cout << "Critical points:" << endl;
+      cout << endl << "Critical points:" << endl;
       vector_to_stream(function_values);
 
       cout << "Singularity points:" << endl;
