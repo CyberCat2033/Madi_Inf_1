@@ -2,6 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 using namespace std;
@@ -16,13 +17,13 @@ private:
   double delta;
 
   string vector_Min_Max(const vector<double> &vec) {
-    if (vec.size() > 1) {
-      return {"Max point= " +
-              to_string((double)*max_element(vec.begin(), vec.end())) + "\n" +
-              "Min point= " +
-              to_string((double)*min_element(vec.begin(), vec.end())) + "\n"};
-    } else {
+    if (vec.size() < 2) {
       return "";
+    } else {
+      ostringstream result;
+      result << "Max point = " << *max_element(vec.begin(), vec.end()) << endl;
+      result << "Min point = " << *min_element(vec.begin(), vec.end()) << endl;
+      return result.str();
     }
   }
 
