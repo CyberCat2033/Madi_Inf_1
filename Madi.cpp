@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -17,11 +18,11 @@ private:
       singularities; // List of X values for which function doesn't exist
   double start_point, end_point;
   double delta;
-  const string distance_warning = "Start point must be != end point\n";
 
+  const string distance_warning = "Start point must be not equal end point";
   const string number_warning = "Number of roots must be more than 2";
 
-  string vector_Min_Max(const vector<double> &vec) {
+  string get_min_max_str(const vector<double> &vec) {
     if (vec.size() < 2) {
       return "";
     } else {
@@ -45,6 +46,21 @@ private:
     }
   }
 
+  void vector_to_console(
+      const vector<double> &vec) { // Writes all elements of vector to console
+                                   // out vector_to_stream
+    cout << vector_to_string(vec);
+    cout << endl << get_min_max_str(vec) << endl;
+  }
+
+  void vector_to_file(const vector<double> &vec,
+                      ofstream &file) { // Writes all elements of vector to file
+
+    file << vector_to_string(vec);
+    file << endl << get_min_max_str(vec);
+    file.close();
+  }
+
   void function_pushes(
       double numerator, double denominator,
       double x) { // Adds result of calculation to results collection,
@@ -52,9 +68,9 @@ private:
                   // adds this point to singularity collection
 
     if (denominator == 0) {
-      singularities.push_back(x);
-      return;
+      throw invalid_argument("Division by zero");
     }
+
     function_values.push_back(numerator / denominator);
   }
 
@@ -63,71 +79,56 @@ private:
     singularities.clear();
   }
 
-  void vector_to_console(
-      const vector<double> &vec) { // Writes all elements of vector to console
-                                   // out vector_to_stream
-    cout << vector_to_string(vec);
-    cout << endl << vector_Min_Max(vec) << endl;
-  }
-
-  void vector_to_file(const vector<double> &vec,
-                      ofstream &file) { // Writes all elements of vector to file
-
-    file << vector_to_string(vec);
-    file << endl << vector_Min_Max(vec);
-    file.close();
-  }
-
-  double delta_calc(double s_point, double e_point, int N) {
+  double calc_delta(const double &s_point, const double &e_point,
+                    const int &N) {
     return (double)(e_point - s_point) / (N - 1);
   }
 
-  bool dist_checker(double s_point, double e_point) {
+  bool check_distance(double s_point, double e_point) {
     return e_point != s_point;
   }
 
-  bool num_roots_checker(double delta) { return delta > 2; }
+  bool check_root_count(double delta) { return delta > 2; }
 
-  double Init_Delta(double s_point, double e_point) {
+  double init_delta(double s_point, double e_point) {
+
     int N;
     cout << "Please enter the number of roots" << endl;
     cin >> N;
-    delta = delta_calc(s_point, e_point, N);
+    delta = calc_delta(s_point, e_point, N);
 
-    if (!num_roots_checker(delta)) {
+    if (!check_root_count(delta)) {
       cout << number_warning << endl;
-      Init_Delta(s_point, e_point);
+      init_delta(s_point, e_point);
     }
 
     return delta;
   }
 
-  void Init() {
+  void init() {
 
     cout << "Please enter Start and End points" << endl;
     cin >> start_point >> end_point;
 
-    if (!dist_checker(start_point, end_point)) {
+    if (!check_distance(start_point, end_point)) {
       cout << distance_warning << endl;
-      Init();
+      init();
     }
 
-    delta = Init_Delta(start_point, end_point);
+    delta = init_delta(start_point, end_point);
   }
 
-  void Init(double s_point, double e_point, int N) {
+  void init(double s_point, double e_point, int N) {
 
-    if (!dist_checker(s_point, e_point)) {
-      cout << distance_warning << endl;
-      exit(1);
+    if (!check_distance(s_point, e_point)) {
+      throw invalid_argument(distance_warning);
     }
 
-    double dlt = delta_calc(s_point, e_point, N);
-
-    if (!num_roots_checker(N)) {
-      cout << number_warning << endl;
-      exit(1);
+    if (!check_root_count(N)) {
+      throw invalid_argument(number_warning);
     }
+
+    double dlt = calc_delta(s_point, e_point, N);
 
     start_point = s_point;
     end_point = e_point;
@@ -144,9 +145,8 @@ private:
 
   void f(double x) {
 
-    double numerator = sin(pow(x / 2, 2)) + 23 * x;
-    double denominator = cos(x / 2);
-
+    double numerator = (pow(x, 2) - 5) * sqrt(abs(tan(x)));
+    double denominator = x * exp(-2 * x);
     function_pushes(numerator, denominator, x);
   }
 
@@ -158,14 +158,29 @@ private:
   }
 
 public:
-  Madi() { Init(); }
-  Madi(double s_point, double e_point, int N) { Init(s_point, e_point, N); }
+  Madi() { init(); }
+
+  Madi(double s_point, double e_point, int N) {
+    try {
+      init(s_point, e_point, N);
+
+    } catch (const invalid_argument &e) {
+      cout << e.what() << endl;
+      exit(1);
+    }
+  }
+
+  ~Madi() { vector_clear(); };
 
   void f_range() {
     vector_clear();
 
     for (auto i = start_point; i <= end_point; i += delta) {
-      f_test(i);
+      try {
+        f(i);
+      } catch (invalid_argument) {
+        singularities.push_back(i);
+      }
     }
   }
 
@@ -176,7 +191,6 @@ public:
 
       cout << "Singularity points:" << endl;
       vector_to_console(singularities);
-
     } else {
 
       ofstream crit_output_file("./function_values.txt");
