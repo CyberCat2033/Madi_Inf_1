@@ -1,7 +1,7 @@
 #include "Madi.cpp"
 
 int main(int argc, char *argv[]) {
-  Madi md = Madi(-100, 100, 201);
+  Madi md = Madi();
   md.f_range();
   md.print();
   md.print(false);

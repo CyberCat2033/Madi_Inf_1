@@ -88,19 +88,18 @@ private:
     return e_point != s_point;
   }
 
-  bool check_root_count(double delta) { return delta > 2; }
+  bool check_root_count(double number) { return number > 2; }
 
   double init_delta(double s_point, double e_point) {
 
     int N;
     cout << "Please enter the number of roots" << endl;
     cin >> N;
-    delta = calc_delta(s_point, e_point, N);
-
-    if (!check_root_count(delta)) {
+    if (!check_root_count(N)) {
       cout << number_warning << endl;
       init_delta(s_point, e_point);
     }
+    delta = calc_delta(s_point, e_point, N);
 
     return delta;
   }
