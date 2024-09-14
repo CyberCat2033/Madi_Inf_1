@@ -96,7 +96,7 @@ private:
     cout << "Please enter the number of roots" << endl;
     cin >> N;
     if (!check_root_count(N)) {
-      cout << number_warning << endl;
+      cerr << number_warning << endl;
       init_delta(s_point, e_point);
     }
     delta = calc_delta(s_point, e_point, N);
@@ -110,7 +110,7 @@ private:
     cin >> start_point >> end_point;
 
     if (!check_distance(start_point, end_point)) {
-      cout << distance_warning << endl;
+      cerr << distance_warning << endl;
       init();
     }
 
@@ -164,7 +164,7 @@ public:
       init(s_point, e_point, N);
 
     } catch (const invalid_argument &e) {
-      cout << e.what() << endl;
+      cerr << e.what() << endl;
       exit(1);
     }
   }
