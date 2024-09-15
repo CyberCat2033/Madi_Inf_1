@@ -90,44 +90,49 @@ private:
 
   bool check_root_count(double number) { return number > 2; }
 
-  double init_delta(double s_point, double e_point) {
+  double get_root_count(double s_point, double e_point) {
 
-    int N;
-    cout << "Please enter the number of roots" << endl;
-    cin >> N;
-    if (!check_root_count(N)) {
-      cerr << number_warning << endl;
-      init_delta(s_point, e_point);
+    int root_count;
+
+    while (true) {
+      cout << "Please enter the number of roots" << endl;
+      cin >> root_count;
+
+      if (check_root_count(root_count)) {
+        break;
+      }
+      cout << number_warning << endl;
     }
-    delta = calc_delta(s_point, e_point, N);
-
-    return delta;
+    return calc_delta(s_point, e_point, root_count);
   }
 
   void init() {
 
-    cout << "Please enter Start and End points" << endl;
-    cin >> start_point >> end_point;
+    while (true) {
 
-    if (!check_distance(start_point, end_point)) {
-      cerr << distance_warning << endl;
-      init();
+      cout << "Please enter Start and End points" << endl;
+      cin >> start_point >> end_point;
+
+      if (check_distance(start_point, end_point)) {
+        break;
+      }
+      cout << distance_warning << endl;
     }
 
-    delta = init_delta(start_point, end_point);
+    delta = get_root_count(start_point, end_point);
   }
 
-  void init(double s_point, double e_point, int N) {
+  void init(double s_point, double e_point, int root_count) {
 
     if (!check_distance(s_point, e_point)) {
       throw invalid_argument(distance_warning);
     }
 
-    if (!check_root_count(N)) {
+    if (!check_root_count(root_count)) {
       throw invalid_argument(number_warning);
     }
 
-    double dlt = calc_delta(s_point, e_point, N);
+    double dlt = calc_delta(s_point, e_point, root_count);
 
     start_point = s_point;
     end_point = e_point;
@@ -146,10 +151,12 @@ private:
 
     double numerator = (pow(x, 2) - 5) * sqrt(abs(tan(x)));
     double denominator = x * exp(-2 * x);
+
     function_pushes(numerator, denominator, x);
   }
 
   void f_test2(double x) {
+
     double numerator = cos(2 * x) + pow(sin(x), 2) - 0.5;
     double denominator = 1;
 
@@ -160,6 +167,7 @@ public:
   Madi() { init(); }
 
   Madi(double s_point, double e_point, int N) {
+
     try {
       init(s_point, e_point, N);
 
