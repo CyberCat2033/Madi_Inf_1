@@ -3,25 +3,31 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
+
   std::string path;
-  for (int i = 1; i < argc; ++i) {
+
+  for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
 
-    // Проверяем аргумент '-p'
     if (arg == "-p" && i + 1 < argc) {
-      std::string path = argv[++i]; // Следующий аргумент после '-p' будет путём
+      path = argv[++i];
+      std::cout << path;
     }
   }
 
-  if (path.empty() && argc > 0) {
+  if (path.empty() && argc > 1) {
     std::cerr << "No path specified." << std::endl;
     return 1;
   }
 
-  Madi md = Madi();
+  Madi md = Madi(-1000, 1000, 1000);
   md.f_range();
-  md.print();
-  md.print(false);
+  if (path.empty()) {
+    md.print();
+
+  } else {
+    md.print(path);
+  }
 
   return 0;
 }

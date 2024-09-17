@@ -62,14 +62,21 @@ private:
   }
 
   void function_pushes(
-      double numerator, double denominator,
-      double x) { // Adds result of calculation to results collection,
-                  // if the function doesn't exist in this point it
-                  // adds this point to singularity collection
+      double numerator,
+      double denominator) { // Adds result of calculation to results collection,
+                            // if the function doesn't exist in this point it
+                            // adds this point to singularity collection
 
+    double result;
     if (denominator == 0) {
       throw invalid_argument("Division by zero");
     }
+
+    // if (numerator == 0) {
+    //   result = 0;
+    // } else {
+    //   result = numerator / denominator;
+    // }
 
     function_values.push_back(numerator / denominator);
   }
@@ -79,16 +86,15 @@ private:
     singularities.clear();
   }
 
-  double calc_delta(const double &s_point, const double &e_point,
-                    const int &N) {
-    return (double)(e_point - s_point) / (N - 1);
+  double calc_delta(double s_point, double e_point, int root_counter) {
+    return (double)(e_point - s_point) / (root_counter - 1);
   }
 
   bool check_distance(double s_point, double e_point) {
     return e_point != s_point;
   }
 
-  bool check_root_count(double number) { return number > 2; }
+  bool check_root_count(double root_counter) { return root_counter > 2; }
 
   double get_root_count(double s_point, double e_point) {
 
@@ -144,7 +150,7 @@ private:
     double numerator = 25 * pow(x, 2);
     double denominator = x;
 
-    function_pushes(numerator, denominator, x);
+    function_pushes(numerator, denominator);
   }
 
   void f(double x) {
@@ -152,7 +158,7 @@ private:
     double numerator = (pow(x, 2) - 5) * sqrt(abs(tan(x)));
     double denominator = x * exp(-2 * x);
 
-    function_pushes(numerator, denominator, x);
+    function_pushes(numerator, denominator);
   }
 
   void f_test2(double x) {
@@ -160,7 +166,7 @@ private:
     double numerator = cos(2 * x) + pow(sin(x), 2) - 0.5;
     double denominator = 1;
 
-    function_pushes(numerator, denominator, x);
+    function_pushes(numerator, denominator);
   }
 
 public:
@@ -191,20 +197,19 @@ public:
     }
   }
 
-  void print(bool console = true) {
-    if (console) {
-      cout << endl << "Function values:" << endl;
-      vector_to_console(function_values);
+  void print() {
+    cout << endl << "Function values:" << endl;
+    vector_to_console(function_values);
 
-      cout << "Singularity points:" << endl;
-      vector_to_console(singularities);
-    } else {
+    cout << "Singularity points:" << endl;
+    vector_to_console(singularities);
+  }
 
-      ofstream crit_output_file("./function_values.txt");
-      ofstream sing_output_file("./singularity.txt");
+  void print(const string &path_to_file) {
+    ofstream crit_output_file(path_to_file + "function_values.txt");
+    ofstream sing_output_file(path_to_file + "singularity.txt");
 
-      vector_to_file(function_values, crit_output_file);
-      vector_to_file(singularities, sing_output_file);
-    }
+    vector_to_file(function_values, crit_output_file);
+    vector_to_file(singularities, sing_output_file);
   }
 };
