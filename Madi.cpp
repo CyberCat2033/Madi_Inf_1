@@ -22,7 +22,7 @@ private:
   const string distance_warning = "Start point must be not equal end point";
   const string number_warning = "Number of roots must be more than 2";
 
-  string get_min_max_str(const vector<double> &vec) {
+  string get_min_max(const vector<double> &vec) {
     if (vec.size() < 2) {
       return "";
     } else {
@@ -49,15 +49,15 @@ private:
   void vector_to_console(
       const vector<double> &vec) { // Writes all elements of vector to console
                                    // out vector_to_stream
-    cout << vector_to_string(vec);
-    cout << endl << get_min_max_str(vec) << endl;
+    cout << vector_to_string(vec) << endl;
+    cout << get_min_max(vec) << endl;
   }
 
   void vector_to_file(const vector<double> &vec,
                       ofstream &file) { // Writes all elements of vector to file
 
     file << vector_to_string(vec);
-    file << endl << get_min_max_str(vec);
+    file << endl << get_min_max(vec);
     file.close();
   }
 
@@ -72,12 +72,6 @@ private:
       throw invalid_argument("Division by zero");
     }
 
-    // if (numerator == 0) {
-    //   result = 0;
-    // } else {
-    //   result = numerator / denominator;
-    // }
-
     function_values.push_back(numerator / denominator);
   }
 
@@ -87,7 +81,7 @@ private:
   }
 
   double calc_delta(double s_point, double e_point, int root_counter) {
-    return (double)(e_point - s_point) / (root_counter - 1);
+    return (e_point - s_point) / (root_counter - 1);
   }
 
   bool check_distance(double s_point, double e_point) {
@@ -190,7 +184,7 @@ public:
 
     for (auto i = start_point; i <= end_point; i += delta) {
       try {
-        f(i);
+        f_test2(i);
       } catch (invalid_argument) {
         singularities.push_back(i);
       }

@@ -3,7 +3,6 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-
   std::string path;
 
   for (int i = 1; i < argc; i++) {
@@ -11,7 +10,6 @@ int main(int argc, char *argv[]) {
 
     if (arg == "-p" && i + 1 < argc) {
       path = argv[++i];
-      std::cout << path;
     }
   }
 
@@ -20,11 +18,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  Madi md = Madi(-1000, 1000, 1000);
+  Madi md = Madi();
+
   md.f_range();
+
   if (path.empty()) {
     md.print();
-
   } else {
     md.print(path);
   }
